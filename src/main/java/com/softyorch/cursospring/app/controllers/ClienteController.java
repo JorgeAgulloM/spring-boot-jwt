@@ -1,10 +1,9 @@
 package com.softyorch.cursospring.app.controllers;
 
-import com.softyorch.cursospring.app.models.dao.IClienteDao;
 import com.softyorch.cursospring.app.models.entity.Cliente;
+import com.softyorch.cursospring.app.service.IClienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,17 +16,17 @@ import org.springframework.web.bind.support.SessionStatus;
 import java.util.Map;
 
 @Controller
-@SessionAttributes("cliente") //para poder obtener guardar los datos de sesión del cliente y obtener el id para la edición.
+@SessionAttributes("cliente")
+//para poder obtener guardar los datos de sesión del cliente y obtener el id para la edición.
 public class ClienteController {
 
     @Autowired
-    @Qualifier("ClienteDaoJPA")
-    private IClienteDao clienteDao;
+    private IClienteService clienteService;
 
     @RequestMapping(value = "/listar", method = RequestMethod.GET)
     public String listar(Model model) {
         model.addAttribute("titulo", "Listado de clientes");
-        model.addAttribute("clientes", clienteDao.findeAll());
+        model.addAttribute("clientes", clienteService.findeAll());
         return "listar";
     }
 
@@ -46,7 +45,7 @@ public class ClienteController {
         Cliente cliente = null;
 
         if (id > 0) {
-            cliente = clienteDao.findOne(id);
+            cliente = clienteService.findOne(id);
         } else {
             return "redirect:/listar";
         }
@@ -68,7 +67,7 @@ public class ClienteController {
             return "form";
         }
 
-        clienteDao.save(cliente);
+        clienteService.save(cliente);
         status.setComplete(); //Con esto reseteamos los datos de sesión
         return "redirect:listar";
     }
@@ -76,7 +75,7 @@ public class ClienteController {
     @RequestMapping(value = "/eliminar/{id}")
     public String eliminar(@PathVariable(value = "id") Long id) {
 
-        if (id > 0) clienteDao.delete(id);
+        if (id > 0) clienteService.delete(id);
         return "redirect:/listar";
     }
 
