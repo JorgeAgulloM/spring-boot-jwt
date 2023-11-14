@@ -8,7 +8,9 @@ import com.softyorch.cursospring.app.models.entity.Cliente;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
+//DAO CRUD
 
 @Repository("ClienteDaoJPA")
 public class ClienteDaoImpl implements IClienteDao {
@@ -17,10 +19,16 @@ public class ClienteDaoImpl implements IClienteDao {
 	private EntityManager em;
 	
 	@SuppressWarnings("unchecked")
-	@Transactional()
+	@Transactional(readOnly = true)
 	@Override
 	public List<Cliente> findeAll() {
 		return em.createQuery("from Cliente").getResultList();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Cliente findOne(Long id) {
+		return em.find(Cliente.class, id);
 	}
 
 	@Override
@@ -33,8 +41,9 @@ public class ClienteDaoImpl implements IClienteDao {
 	}
 
 	@Override
-	public Cliente findOne(Long id) {
-		return em.find(Cliente.class, id);
+	@Transactional
+	public void delete(Long id) {
+		em.remove(findOne(id));
 	}
 
 }
