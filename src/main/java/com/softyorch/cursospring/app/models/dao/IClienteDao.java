@@ -7,5 +7,6 @@ import com.softyorch.cursospring.app.models.entity.Cliente;
 public interface IClienteDao {
 
 	public List<Cliente> findeAll();
-	
+
+	public void save(Cliente cliente);
 }
