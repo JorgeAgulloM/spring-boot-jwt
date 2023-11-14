@@ -1,16 +1,6 @@
 package com.softyorch.cursospring.app.models.dao;
 
-import java.util.List;
-
 import com.softyorch.cursospring.app.models.entity.Cliente;
+import org.springframework.data.repository.CrudRepository;
 
-public interface IClienteDao {
-
-	public List<Cliente> findeAll();
-
-	public Cliente findOne(Long id);
-
-	public void save(Cliente cliente);
-
-	public void delete(Long id);
-}
+public interface IClienteDao extends CrudRepository<Cliente, Long> {}

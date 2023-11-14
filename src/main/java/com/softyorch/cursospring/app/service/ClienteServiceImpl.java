@@ -3,7 +3,6 @@ package com.softyorch.cursospring.app.service;
 import com.softyorch.cursospring.app.models.dao.IClienteDao;
 import com.softyorch.cursospring.app.models.entity.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,20 +17,15 @@ import java.util.List;
 public class ClienteServiceImpl implements IClienteService {
 
     @Autowired
-    @Qualifier("ClienteDaoJPA")
     private IClienteDao clienteDao;
 
     @Override
     @Transactional(readOnly = true)
-    public List<Cliente> findeAll() {
-        return clienteDao.findeAll();
-    }
+    public List<Cliente> findeAll() {return (List<Cliente>) clienteDao.findAll();}
 
     @Override
     @Transactional(readOnly = true)
-    public Cliente findOne(Long id) {
-        return clienteDao.findOne(id);
-    }
+    public Cliente findOne(Long id) {return clienteDao.findById(id).orElse(null);}
 
     @Override
     @Transactional
@@ -42,6 +36,6 @@ public class ClienteServiceImpl implements IClienteService {
     @Override
     @Transactional
     public void delete(Long id) {
-        clienteDao.delete(id);
+        clienteDao.deleteById(id);
     }
 }
