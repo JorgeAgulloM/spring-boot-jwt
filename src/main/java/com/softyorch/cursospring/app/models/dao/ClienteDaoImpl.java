@@ -10,7 +10,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
-@Repository
+@Repository("ClienteDaoJPA")
 public class ClienteDaoImpl implements IClienteDao {
 
 	@PersistenceContext
