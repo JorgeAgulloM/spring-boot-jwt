@@ -3,9 +3,9 @@
 <head th:fragment="head">
     <meta charset="UTF-8" />
     <title th:text="'Spring Boot: MVC + Thymeleaf + Data JPA - ' + ${titulo}"></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
-<body>
+<body class="bg-dark">
 
     <header th:fragment="header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -31,7 +31,7 @@
 
     <div class="container"></div>
 
-    <footer th:fragment="footer" class="container">
+    <footer th:fragment="footer" class="container bg-dark text-white">
         <hr>
         <img th:src="@{/images/Logo.png}" alt="Spring Logo">
         <p>
@@ -42,9 +42,8 @@
             Este proyecto fué desarrollado en IDE IntelliJ IDEA Community Edition | &copy;Jorge Agulló 2023
         </p>
 
-
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+        <script th:src="@{/js/popper.min.js}"></script>
+        <script th:src="@{/js/bootstrap.min.js}"></script>
     </footer>
 
 </body>
