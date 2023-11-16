@@ -1,5 +1,5 @@
 /* Populate tables*/
-INSERT INTO clientes (nombre, apellido, email, create_at, photo) VALUES ('John', 'Does', 'john@does.com', '2023-08-23');, ''
+INSERT INTO clientes (nombre, apellido, email, create_at, photo) VALUES ('John', 'Does', 'john@does.com', '2023-08-23', '');
 INSERT INTO clientes (nombre, apellido, email, create_at, photo) VALUES ('Alice', 'Johnson', 'alice.johnson@email.com', '2023-09-05', '');
 INSERT INTO clientes (nombre, apellido, email, create_at, photo) VALUES ('Bobi', 'Smith', 'bob.smith@email.com', '2023-09-10', '');
 INSERT INTO clientes (nombre, apellido, email, create_at, photo) VALUES ('Catherine', 'Williams', 'catherine@email.com', '2023-09-15', '');
