@@ -3,6 +3,8 @@ package com.softyorch.cursospring.app.service;
 import com.softyorch.cursospring.app.models.dao.IClienteDao;
 import com.softyorch.cursospring.app.models.entity.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,13 @@ public class ClienteServiceImpl implements IClienteService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Cliente> findeAll() {return (List<Cliente>) clienteDao.findAll();}
+    public List<Cliente> findAll() {return (List<Cliente>) clienteDao.findAll();}
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Cliente> findAll(Pageable page) {
+        return clienteDao.findAll(page);
+    }
 
     @Override
     @Transactional(readOnly = true)
