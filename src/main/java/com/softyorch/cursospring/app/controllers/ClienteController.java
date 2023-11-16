@@ -13,8 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @Controller
@@ -73,11 +78,35 @@ public class ClienteController {
     // que estamos pasando al formulario, en caso de que no sea así, se puede validar con @ModelAttribute("cliente")
     */
     @RequestMapping(value = "/form", method = RequestMethod.POST)
-    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, RedirectAttributes flash, SessionStatus status) {
+    public String guardar(
+            @Valid Cliente cliente,
+            BindingResult result,
+            Model model,
+            @RequestParam("file") MultipartFile photo,
+            RedirectAttributes flash,
+            SessionStatus status
+    ) {
 
         if (result.hasErrors()) {
             model.addAttribute("titulo", "Formulario de cliente");
             return "form";
+        }
+
+        if (!photo.isEmpty()) {
+            Path resourcesDir = Paths.get("src//main//resources//static//uploads");
+            String rootPath = resourcesDir.toFile().getAbsolutePath();
+            try {
+                byte[] bytes = photo.getBytes();
+                Path path = Paths.get(rootPath + "//" + photo.getOriginalFilename());
+                Files.write(path, bytes);
+                flash.addFlashAttribute(
+                        "info",
+                        "Foto " + photo.getOriginalFilename() + " subida correctamente."
+                );
+                cliente.setPhoto(photo.getOriginalFilename());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         String msgFlash = (cliente.getId() != null) ? "editado" : "creado";
