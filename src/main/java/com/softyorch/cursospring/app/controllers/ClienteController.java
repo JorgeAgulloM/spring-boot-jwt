@@ -2,12 +2,11 @@ package com.softyorch.cursospring.app.controllers;
 
 import com.softyorch.cursospring.app.models.entity.Cliente;
 import com.softyorch.cursospring.app.service.IClienteService;
+import com.softyorch.cursospring.app.service.IUploadFileService;
 import com.softyorch.cursospring.app.util.paginator.PageRender;
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,14 +20,9 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.softyorch.cursospring.app.util.Constants.UPLOADS_FOLDER;
 
@@ -39,20 +33,16 @@ public class ClienteController {
 
     @Autowired
     private IClienteService clienteService;
-
-    //private final Logger log = LoggerFactory.getLogger(getClass());
+    @Autowired
+    private IUploadFileService uploadFileService;
 
     @GetMapping(value = "/" + UPLOADS_FOLDER + "/{filename:.+}") // con la expresión regular :.+ evitamos que spriong trunque la extensión de la imagen.
     public ResponseEntity<Resource> showPhoto(@PathVariable String filename) {
-        Path pathPhoto = Paths.get(UPLOADS_FOLDER).resolve(filename).toAbsolutePath();
 
-        Resource resource = null;
+        Resource resource;
+
         try {
-            resource = new UrlResource(pathPhoto.toUri());
-
-            if (!resource.exists() && !resource.isReadable()) {
-                throw new RuntimeException("Error: no se puede leer la imagen: " + pathPhoto);
-            }
+            resource = uploadFileService.load(filename);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -150,25 +140,21 @@ public class ClienteController {
                     cliente.getPhoto() != null &&
                     !cliente.getPhoto().isEmpty()
             ) {
-                deletePhoto(cliente, null);
+                uploadFileService.delete(cliente.getPhoto());
             }
 
-            String uniqueFilename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-            Path rootPath = Paths
-                    .get(UPLOADS_FOLDER)
-                    .resolve(uniqueFilename)
-                    .toAbsolutePath();
-
+            String uniqueFilename;
             try {
-                Files.copy(photo.getInputStream(), rootPath);
-                flash.addFlashAttribute(
-                        "info",
-                        "Foto " + uniqueFilename + " subida correctamente."
-                );
-                cliente.setPhoto(uniqueFilename);
+                uniqueFilename = uploadFileService.copy(photo);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+            flash.addFlashAttribute(
+                    "info",
+                    "Foto " + uniqueFilename + " subida correctamente."
+            );
+            cliente.setPhoto(uniqueFilename);
         }
 
         String msgFlash = (cliente.getId() != null) ? "editado" : "creado";
@@ -188,26 +174,16 @@ public class ClienteController {
             clienteService.delete(id);
             flash.addFlashAttribute("success", "Cliente eliminado!!");
 
-            deletePhoto(cliente, flash);
+            if (uploadFileService.delete(cliente.getPhoto())) {
+                flash.addFlashAttribute(
+                        "info",
+                        "Foto " + cliente.getPhoto() + " eliminada con éxisto!"
+                );
+            }
 
         }
 
         return "redirect:/listar";
-    }
-
-    private void deletePhoto(Cliente cliente, @Nullable RedirectAttributes flash) {
-        Path rootPhoto = Paths.get(UPLOADS_FOLDER).resolve(cliente.getPhoto()).toAbsolutePath();
-        File photo = rootPhoto.toFile();
-
-        if (photo.exists() && photo.canRead()) {
-            if (photo.delete()) {
-                if (flash != null)
-                    flash.addFlashAttribute(
-                            "info",
-                            "Foto " + cliente.getPhoto() + " eliminada con éxisto!"
-                    );
-            }
-        }
     }
 
 }
