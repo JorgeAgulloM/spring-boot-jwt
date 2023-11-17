@@ -4,13 +4,14 @@ import com.softyorch.cursospring.app.models.entity.Cliente;
 import com.softyorch.cursospring.app.service.IClienteService;
 import com.softyorch.cursospring.app.util.paginator.PageRender;
 import jakarta.validation.Valid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +36,32 @@ public class ClienteController {
     @Autowired
     private IClienteService clienteService;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    //private final Logger log = LoggerFactory.getLogger(getClass());
+
+    @GetMapping(value = "/uploads/{filename:.+}") // con la expresión regular :.+ evitamos que spriong trunque la extensión de la imagen.
+    public ResponseEntity<Resource> showPhoto(@PathVariable String filename) {
+        Path pathPhoto = Paths.get("uploads").resolve(filename).toAbsolutePath();
+
+        Resource resource = null;
+        try {
+            resource = new UrlResource(pathPhoto.toUri());
+
+            if (!resource.exists() && !resource.isReadable()) {
+                throw new RuntimeException("Error: no se puede leer la imagen: " + pathPhoto);
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return ResponseEntity
+                .ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + resource.getFilename() + "\""
+                )
+                .body(resource);
+    }
+
 
     @GetMapping(value = "/detail/{id}")
     public String detail(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
@@ -119,8 +146,6 @@ public class ClienteController {
                     .get("uploads")
                     .resolve(uniqueFilename)
                     .toAbsolutePath();
-
-            log.info("rootPath: " + rootPath);
 
             try {
                 Files.copy(photo.getInputStream(), rootPath);
