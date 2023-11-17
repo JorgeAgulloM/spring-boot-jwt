@@ -1,7 +1,9 @@
 package com.softyorch.cursospring.app.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -39,8 +41,24 @@ public class Cliente implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createAt;
 
+	@Column(name = "facturas")
+	@OneToMany( // Un cliente muchas facturas
+			mappedBy = "cliente", //Mapeo por el atributo de la otra clase de la realación. Se consigue que cliente tenga vista de las faturas pero las facturas solo de su cliente.
+			fetch = FetchType.LAZY, //LAZY carga de datos perezosa, evita traer to.do con una consulta solo obtendrá los datos cuando se le invoque, y no antes.
+			cascade = CascadeType.ALL //Cascade.ALL La persistencia y la eliminación irán en cascada.
+	)
+	private List<Factura> facturas;
+
+	public Cliente() {
+		facturas = new ArrayList<>();
+	}
+
 	@Column(name = "photo")
 	private String photo;
+
+	public void addFatura(Factura factura) {
+		facturas.add(factura);
+	}
 
 	public Long getId() {
 		return id;
@@ -86,7 +104,13 @@ public class Cliente implements Serializable {
 		return serialVersionUID;
 	}
 
-	private static final long serialVersionUID = 1L;
+	public List<Factura> getFacturas() {
+		return facturas;
+	}
+
+	public void setFacturas(List<Factura> facturas) {
+		this.facturas = facturas;
+	}
 
 	public String getPhoto() {
 		return photo;
@@ -95,4 +119,7 @@ public class Cliente implements Serializable {
 	public void setPhoto(String photo) {
 		this.photo = photo;
 	}
+
+	private static final long serialVersionUID = 1L;
+
 }
