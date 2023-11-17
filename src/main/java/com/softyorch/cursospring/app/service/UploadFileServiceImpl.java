@@ -3,6 +3,7 @@ package com.softyorch.cursospring.app.service;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -57,4 +58,15 @@ public class UploadFileServiceImpl implements IUploadFileService {
         return Paths.get(UPLOADS_FOLDER).resolve(filename).toAbsolutePath();
 
     }
+
+    @Override
+    public void init() throws IOException {
+        Files.createDirectory(Paths.get(UPLOADS_FOLDER));
+    }
+
+    @Override
+    public void deleteAll() {
+        FileSystemUtils.deleteRecursively(Paths.get(UPLOADS_FOLDER).toFile());
+    }
+
 }
