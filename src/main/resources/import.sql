@@ -49,3 +49,14 @@ INSERT INTO productos (nombre, precio, create_at) VALUES ('Ikea Ekedalen Dining 
 INSERT INTO productos (nombre, precio, create_at) VALUES ('Nike Air Max Sneakers', 129, NOW());
 INSERT INTO productos (nombre, precio, create_at) VALUES ('Sapiens: De Animales a Dioses', 25, NOW());
 INSERT INTO productos (nombre, precio, create_at) VALUES ('Ring Doorbell Security Camera', 199, NOW());
+
+/* Facturas */
+INSERT INTO facturas (descripcion, observacion, cliente_id, create_at) VALUES('Factura equipos de oficina', null, 1, NOW());
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(1, 1, 1);
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(2, 1, 4);
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(3, 1, 5);
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(1, 1, 7);
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(1, 1, 3);
+
+INSERT INTO facturas (descripcion, observacion, cliente_id, create_at) VALUES('Factura bicicleta', 'Alguna nota importante!', 1, NOW());
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(3, 2, 11);
