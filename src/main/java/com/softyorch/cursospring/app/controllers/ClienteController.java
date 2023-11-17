@@ -4,6 +4,9 @@ import com.softyorch.cursospring.app.models.entity.Cliente;
 import com.softyorch.cursospring.app.service.IClienteService;
 import com.softyorch.cursospring.app.util.paginator.PageRender;
 import jakarta.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @SessionAttributes("cliente")
@@ -29,6 +33,8 @@ public class ClienteController {
 
     @Autowired
     private IClienteService clienteService;
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @GetMapping(value = "/detail/{id}")
     public String detail(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
@@ -108,16 +114,21 @@ public class ClienteController {
 
         if (!photo.isEmpty()) {
 
-            String rootPath = "C://Temp//uploads"; //Linux -> /opt/uploads/
+            String uniqueFilename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
+            Path rootPath = Paths
+                    .get("uploads")
+                    .resolve(uniqueFilename)
+                    .toAbsolutePath();
+
+            log.info("rootPath: " + rootPath);
+
             try {
-                byte[] bytes = photo.getBytes();
-                Path path = Paths.get(rootPath + "//" + photo.getOriginalFilename());
-                Files.write(path, bytes);
+                Files.copy(photo.getInputStream(), rootPath);
                 flash.addFlashAttribute(
                         "info",
-                        "Foto " + photo.getOriginalFilename() + " subida correctamente."
+                        "Foto " + uniqueFilename + " subida correctamente."
                 );
-                cliente.setPhoto(photo.getOriginalFilename());
+                cliente.setPhoto(uniqueFilename);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
