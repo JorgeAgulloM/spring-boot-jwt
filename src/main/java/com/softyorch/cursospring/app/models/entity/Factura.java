@@ -23,7 +23,7 @@ public class Factura implements Serializable {
     @Column(name = "create_at")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date createAdt;
+    private Date createAt;
 
     //Muchas facturas para un solo cliente.
     @ManyToOne(fetch = FetchType.LAZY)  //LAZY carga de datos perezosa, evita traer to.do con una consulta solo obtendrá los datos cuando se le invoque, y no antes.
@@ -40,7 +40,7 @@ public class Factura implements Serializable {
 
     @PrePersist
     public void prePersist() {
-        createAdt = new Date();
+        createAt = new Date();
     }
 
     public Long getId() {
@@ -67,12 +67,12 @@ public class Factura implements Serializable {
         this.observacion = observacion;
     }
 
-    public Date getCreateAdt() {
-        return createAdt;
+    public Date getCreateAt() {
+        return createAt;
     }
 
-    public void setCreateAdt(Date createAdt) {
-        this.createAdt = createAdt;
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Cliente getCliente() {
