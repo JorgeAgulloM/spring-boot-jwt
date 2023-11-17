@@ -3,6 +3,7 @@ package com.softyorch.cursospring.app.controllers;
 import com.softyorch.cursospring.app.models.entity.Cliente;
 import com.softyorch.cursospring.app.service.IClienteService;
 import com.softyorch.cursospring.app.util.paginator.PageRender;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -27,6 +29,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.softyorch.cursospring.app.util.Constants.UPLOADS_FOLDER;
 
 @Controller
 @SessionAttributes("cliente")
@@ -38,9 +42,9 @@ public class ClienteController {
 
     //private final Logger log = LoggerFactory.getLogger(getClass());
 
-    @GetMapping(value = "/uploads/{filename:.+}") // con la expresión regular :.+ evitamos que spriong trunque la extensión de la imagen.
+    @GetMapping(value = "/" + UPLOADS_FOLDER + "/{filename:.+}") // con la expresión regular :.+ evitamos que spriong trunque la extensión de la imagen.
     public ResponseEntity<Resource> showPhoto(@PathVariable String filename) {
-        Path pathPhoto = Paths.get("uploads").resolve(filename).toAbsolutePath();
+        Path pathPhoto = Paths.get(UPLOADS_FOLDER).resolve(filename).toAbsolutePath();
 
         Resource resource = null;
         try {
@@ -141,9 +145,17 @@ public class ClienteController {
 
         if (!photo.isEmpty()) {
 
+            if (cliente.getId() != null &&
+                    cliente.getId() > 0 &&
+                    cliente.getPhoto() != null &&
+                    !cliente.getPhoto().isEmpty()
+            ) {
+                deletePhoto(cliente, null);
+            }
+
             String uniqueFilename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
             Path rootPath = Paths
-                    .get("uploads")
+                    .get(UPLOADS_FOLDER)
                     .resolve(uniqueFilename)
                     .toAbsolutePath();
 
@@ -171,11 +183,31 @@ public class ClienteController {
     public String eliminar(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
 
         if (id > 0) {
+            Cliente cliente = clienteService.findOne(id);
+
             clienteService.delete(id);
             flash.addFlashAttribute("success", "Cliente eliminado!!");
+
+            deletePhoto(cliente, flash);
+
         }
 
         return "redirect:/listar";
+    }
+
+    private void deletePhoto(Cliente cliente, @Nullable RedirectAttributes flash) {
+        Path rootPhoto = Paths.get(UPLOADS_FOLDER).resolve(cliente.getPhoto()).toAbsolutePath();
+        File photo = rootPhoto.toFile();
+
+        if (photo.exists() && photo.canRead()) {
+            if (photo.delete()) {
+                if (flash != null)
+                    flash.addFlashAttribute(
+                            "info",
+                            "Foto " + cliente.getPhoto() + " eliminada con éxisto!"
+                    );
+            }
+        }
     }
 
 }
