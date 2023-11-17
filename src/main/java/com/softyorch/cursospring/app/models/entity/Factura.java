@@ -27,7 +27,6 @@ public class Factura implements Serializable {
 
     //Muchas facturas para un solo cliente.
     @ManyToOne(fetch = FetchType.LAZY)  //LAZY carga de datos perezosa, evita traer to.do con una consulta solo obtendrá los datos cuando se le invoque, y no antes.
-    @Column(name = "cliente")
     private Cliente cliente;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

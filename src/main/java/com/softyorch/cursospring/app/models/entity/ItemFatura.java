@@ -15,7 +15,6 @@ public class ItemFatura implements Serializable {
     @Column(name = "cantidad")
     private Integer cantidad;
 
-    @Column(name = "producto")
     @JoinColumn(name = "producto_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Producto producto;
