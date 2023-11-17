@@ -45,7 +45,8 @@ public class Cliente implements Serializable {
 	@OneToMany( // Un cliente muchas facturas
 			mappedBy = "cliente", //Mapeo por el atributo de la otra clase de la realación. Se consigue que cliente tenga vista de las faturas pero las facturas solo de su cliente.
 			fetch = FetchType.LAZY, //LAZY carga de datos perezosa, evita traer to.do con una consulta solo obtendrá los datos cuando se le invoque, y no antes.
-			cascade = CascadeType.ALL //Cascade.ALL La persistencia y la eliminación irán en cascada.
+			cascade = CascadeType.ALL, //Cascade.ALL La persistencia y la eliminación irán en cascada.
+			orphanRemoval = true
 	)
 	private List<Factura> facturas;
 
