@@ -1,6 +1,7 @@
 package com.softyorch.cursospring.app.service;
 
 import com.softyorch.cursospring.app.models.entity.Cliente;
+import com.softyorch.cursospring.app.models.entity.Factura;
 import com.softyorch.cursospring.app.models.entity.Producto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,15 +10,17 @@ import java.util.List;
 
 public interface IClienteService {
 
-    public List<Cliente> findAll();
+    List<Cliente> findAll();
 
-    public Page<Cliente> findAll(Pageable page);
+    Page<Cliente> findAll(Pageable page);
 
-    public Cliente findOne(Long id);
+    Cliente findOne(Long id);
 
-    public void save(Cliente cliente);
+    void save(Cliente cliente);
 
-    public void delete(Long id);
+    void delete(Long id);
 
-    public List<Producto> findByNombre(String term);
+    List<Producto> findByNombre(String term);
+
+    void saveFactura(Factura factura);
 }
