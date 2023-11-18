@@ -44,7 +44,23 @@
                         </tr>
                     </tbody>
                 </table>
-                <h5 class="float-right">Total <span th:text="${factura.total}" class="text-info"></span></h5>
+                <h5 class="float-end">Total <span th:text="${factura.total}" class="text-info"></span></h5>
+                <div class="card border-info mb-4" style="max-width: 20rem;">
+                    <div class="card-header">Observaciones</div>
+                    <div class="card-body">
+                        <p class="card-text"
+                           th:text="${factura.observacion}"
+                           th:if="${not #strings.isEmpty(factura.observacion)}"
+                        ></p>
+                        <h4 class="card-title" th:if="${#strings.isEmpty(factura.observacion)}" th:text="'Sin observaciones'"></h4>
+                    </div>
+                </div>
+                <h4 class="card-title">
+                    <a class="btn btn-light btn-sx"
+                       th:href="@{'/detail/' + ${factura.cliente.id}}"
+                       th:text="'&laquo; volver'">
+                    </a>
+                </h4>
             </div>
         </div>
     </div>
