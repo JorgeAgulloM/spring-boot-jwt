@@ -18,6 +18,7 @@
                         <th class="bg-dark text-white">apellido</th>
                         <th class="bg-dark text-white">email</th>
                         <th class="bg-dark text-white">fecha</th>
+                        <th class="bg-dark text-white">crear factura</th>
                         <th class="bg-dark text-white">editar</th>
                         <th class="bg-dark text-white">eliminar</th>
                     </tr>
@@ -29,6 +30,7 @@
                         <td th:text="${cliente.apellido}"></td>
                         <td th:text="${cliente.email}"></td>
                         <td th:text="${cliente.createAt}"></td>
+                        <td><a class="btn btn-success btn-xs" th:href="@{'/factura/form/' + ${cliente.id}}" th:text="'Crear factura'"></a></td>
                         <td><a class="btn btn-primary btn-xs" th:href="@{/form/} + ${cliente.id}">Editar</a></td>
                         <td><a
                                 class="btn btn-danger btn-xs"

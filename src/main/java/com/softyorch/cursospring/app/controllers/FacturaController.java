@@ -40,9 +40,9 @@ public class FacturaController {
         factura.setCliente(cliente);
 
         model.put("factura", factura);
-        model.put("tilte", "Crear Factura");
+        model.put("title", "Crear Factura");
 
-        return "factura/from";
+        return "factura/form";
     }
 
 
