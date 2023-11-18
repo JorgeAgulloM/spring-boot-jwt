@@ -2,15 +2,14 @@ package com.softyorch.cursospring.app.controllers;
 
 import com.softyorch.cursospring.app.models.entity.Cliente;
 import com.softyorch.cursospring.app.models.entity.Factura;
+import com.softyorch.cursospring.app.models.entity.Producto;
 import com.softyorch.cursospring.app.service.IClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -45,5 +44,10 @@ public class FacturaController {
         return "factura/form";
     }
 
+    /*ResponseBody evita retornar una vista de thymeleaf y repuebla el body de la respuesta con el resultado convertido a json */
+    @GetMapping(value = "/cargar-productos/{term}", produces = {"application/json"})
+    public @ResponseBody List<Producto> cargarProductos(@PathVariable String term) {
+        return clienteService.findByNombre(term);
+    }
 
 }

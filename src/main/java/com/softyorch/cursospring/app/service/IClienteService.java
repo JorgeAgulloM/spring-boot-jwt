@@ -1,6 +1,7 @@
 package com.softyorch.cursospring.app.service;
 
 import com.softyorch.cursospring.app.models.entity.Cliente;
+import com.softyorch.cursospring.app.models.entity.Producto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,4 +18,6 @@ public interface IClienteService {
     public void save(Cliente cliente);
 
     public void delete(Long id);
+
+    public List<Producto> findByNombre(String term);
 }
