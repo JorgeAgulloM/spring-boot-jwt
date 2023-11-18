@@ -26,6 +26,26 @@ public class FacturaController {
     @Autowired
     private IClienteService clienteService;
 
+    @GetMapping("/detail/{id}")
+    public String detail(
+            @PathVariable(value = "id") Long id,
+            Model model,
+            RedirectAttributes flash
+    ) {
+
+        Factura factura = clienteService.findFacturaById(id);
+
+        if (factura == null) {
+            flash.addFlashAttribute("error", "La factura no exite en la base de datos");
+            return "redirect:/listar";
+        }
+
+        model.addAttribute("factura", factura);
+        model.addAttribute("title", "Factura: ".concat(factura.getDescripcion()));
+
+        return "factura/detail";
+    }
+
     @GetMapping("/form/{cliente_id}")
     public String create(
             @PathVariable(value = "cliente_id") Long clienteId,
