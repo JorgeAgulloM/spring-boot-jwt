@@ -1,5 +1,7 @@
 package com.softyorch.cursospring.app;
 
+import com.softyorch.cursospring.app.auth.handler.LoginSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -14,6 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SpringSecurityConfig {
+
+    @Autowired
+    private LoginSuccessHandler successHandler;
 
     @Bean
     public static BCryptPasswordEncoder passwordEncoder() {
@@ -31,7 +36,10 @@ public class SpringSecurityConfig {
                         .requestMatchers("/eliminar/**").hasAnyRole("ADMIN")
                         .requestMatchers("/factura/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated())
-                .formLogin(fl -> fl.loginPage("/login").permitAll())
+                .formLogin(fl -> fl
+                        .loginPage("/login")
+                        .successHandler(successHandler)
+                        .permitAll())
                 .logout(lOut -> lOut
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
