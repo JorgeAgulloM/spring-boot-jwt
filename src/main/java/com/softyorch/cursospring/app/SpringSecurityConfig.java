@@ -38,24 +38,22 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(authz -> authz
+        http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/css/**", "/js/**", "/images/**", "/listar").permitAll()
-                .requestMatchers("/detail/**").hasAnyRole("USER")
-                .requestMatchers("/uploads/**").hasAnyRole("USER")
-                .requestMatchers("/form/**").hasAnyRole("ADMIN")
-                .requestMatchers("/eliminar/**").hasAnyRole("ADMIN")
+                .requestMatchers("/detail/**").hasAuthority("USER")
+                .requestMatchers("/uploads/**").hasAuthority("USER")
+                .requestMatchers("/form/**").hasAuthority("ADMIN")
+                .requestMatchers("/eliminar/**").hasAuthority("ADMIN")
                 .requestMatchers("/factura/**").hasAnyRole("ADMIN")
-                .anyRequest().authenticated());
-
-        http.formLogin(fl -> fl.loginPage("/login").permitAll());
-        http.logout(lOut -> {
-            lOut.invalidateHttpSession(true)
-                    .clearAuthentication(true)
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/list"))
-                    .logoutSuccessUrl("/login?logout")
-                    .permitAll();
-        });
-        http.httpBasic(Customizer.withDefaults());
+                .anyRequest().authenticated())
+                .formLogin(fl -> fl.loginPage("/login").permitAll())
+                .logout(lOut -> lOut
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/list"))
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                ).httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
