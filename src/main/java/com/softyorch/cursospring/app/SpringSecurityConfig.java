@@ -28,10 +28,24 @@ public class SpringSecurityConfig {
                 .withUser(users.username("jorge").password("12345").roles("USER"));
     }
 
-
     @Bean
     public static BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(authz -> authz
+                .requestMatchers("/", "/css/**", "/js/**", "/images/**", "/listar").permitAll()
+                .requestMatchers("/detail/**").hasAnyRole("USER")
+                .requestMatchers("/uploads/**").hasAnyRole("USER")
+                .requestMatchers("/form/**").hasAnyRole("ADMIN")
+                .requestMatchers("/eliminar/**").hasAnyRole("ADMIN")
+                .requestMatchers("/factura/**").hasAnyRole("ADMIN")
+                .anyRequest().authenticated());
+
+        return http.build();
     }
 
 /*    @Bean
@@ -54,19 +68,7 @@ public class SpringSecurityConfig {
     }
 
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(authz -> authz
-                .requestMatchers("/", "/css/**", "/js/**", "/images/**", "/listar").permitAll()
-                .requestMatchers("/ver/**").hasAnyRole("USER")
-                .requestMatchers("/uploads/**").hasAnyRole("USER")
-                .requestMatchers("/form/**").hasAnyRole("ADMIN")
-                .requestMatchers("/eliminar/**").hasAnyRole("ADMIN")
-                .requestMatchers("/factura/**").hasAnyRole("ADMIN")
-                .anyRequest().authenticated());
-
-        return http.build();
     }*/
 
 }
