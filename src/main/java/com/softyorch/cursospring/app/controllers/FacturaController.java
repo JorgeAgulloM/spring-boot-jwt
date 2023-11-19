@@ -33,7 +33,7 @@ public class FacturaController {
             RedirectAttributes flash
     ) {
 
-        Factura factura = clienteService.findFacturaById(id);
+        Factura factura = clienteService.fetchFacturaByIdWithClienteWithItemFacturaWithProducto(id); //.findFacturaById(id);
 
         if (factura == null) {
             flash.addFlashAttribute("error", "La factura no exite en la base de datos");
