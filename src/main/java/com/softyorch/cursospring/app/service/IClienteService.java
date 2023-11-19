@@ -16,6 +16,8 @@ public interface IClienteService {
 
     Cliente findOne(Long id);
 
+    Cliente fetchClienteByIdWithFacturas(Long id);
+
     void save(Cliente cliente);
 
     void delete(Long id);
