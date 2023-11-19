@@ -1,6 +1,7 @@
 package com.softyorch.cursospring.app;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -14,4 +15,9 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceLocations(resourcePath); //Linux -> file:/opt/uploads/
         *//*Hay que crear manualmente el directorio*//*
     }*/
+
+    public void addViewControllers(ViewControllerRegistry registry) {
+        //addViewController -> URL de acceso. setViewName -> vista a devolver.
+        registry.addViewController("/error_403").setViewName("errors/error_403");
+    }
 }

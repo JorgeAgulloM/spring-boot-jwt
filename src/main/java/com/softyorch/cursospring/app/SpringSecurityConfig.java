@@ -3,6 +3,7 @@ package com.softyorch.cursospring.app;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +12,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SpringSecurityConfig {
 
     @Bean
@@ -35,8 +37,9 @@ public class SpringSecurityConfig {
                         .clearAuthentication(true)
                         //.logoutRequestMatcher(new AntPathRequestMatcher("/listar"))
                         .logoutSuccessUrl("/login?logout")
-                        .permitAll()
-                ).httpBasic(Customizer.withDefaults());
+                        .permitAll())
+                .exceptionHandling(((eh) -> eh.accessDeniedPage("/error_403")))
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
