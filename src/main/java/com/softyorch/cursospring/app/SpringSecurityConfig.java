@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SpringSecurityConfig {
@@ -44,6 +45,15 @@ public class SpringSecurityConfig {
                 .requestMatchers("/eliminar/**").hasAnyRole("ADMIN")
                 .requestMatchers("/factura/**").hasAnyRole("ADMIN")
                 .anyRequest().authenticated());
+
+        http.formLogin(fl -> fl.loginPage("/login").permitAll());
+        http.logout(lOut -> {
+            lOut.invalidateHttpSession(true)
+                    .clearAuthentication(true)
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/list"))
+                    .logoutSuccessUrl("/login?logout")
+                    .permitAll();
+        });
 
         return http.build();
     }
