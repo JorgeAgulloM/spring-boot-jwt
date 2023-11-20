@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,6 +50,7 @@ public class ClienteController {
     @Autowired
     private IUploadFileService uploadFileService;
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping(value = "/" + UPLOADS_FOLDER + "/{filename:.+}") // con la expresión regular :.+ evitamos que spriong trunque la extensión de la imagen.
     public ResponseEntity<Resource> showPhoto(@PathVariable String filename) {
 
@@ -68,7 +71,7 @@ public class ClienteController {
                 .body(resource);
     }
 
-
+    @PreAuthorize("hasRole('ROLE_USER')") //@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping(value = "/detail/{id}")
     public String detail(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
         Cliente cliente = clienteService.fetchClienteByIdWithFacturas(id); //findOne(id);
@@ -133,6 +136,7 @@ public class ClienteController {
         return "listar";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/form")
     public String crear(Map<String, Object> model) {
 
@@ -142,6 +146,7 @@ public class ClienteController {
         return "form";
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/form/{id}")
     public String editar(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
 
@@ -167,6 +172,7 @@ public class ClienteController {
     // que tenía insertados por el usuario, siempre y cuando la clase de la Entity entity se llame igual que el nombre
     // que estamos pasando al formulario, en caso de que no sea así, se puede validar con @ModelAttribute("cliente")
     */
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/form", method = RequestMethod.POST)
     public String guardar(
             @Valid Cliente cliente,
@@ -214,6 +220,7 @@ public class ClienteController {
         return "redirect:listar";
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/eliminar/{id}")
     public String eliminar(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
 
