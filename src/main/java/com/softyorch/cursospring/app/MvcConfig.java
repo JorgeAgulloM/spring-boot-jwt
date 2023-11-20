@@ -1,6 +1,8 @@
 package com.softyorch.cursospring.app;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -20,4 +22,10 @@ public class MvcConfig implements WebMvcConfigurer {
         //addViewController -> URL de acceso. setViewName -> vista a devolver.
         registry.addViewController("/error_403").setViewName("errors/error_403");
     }
+
+    @Bean
+    public static BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 }
