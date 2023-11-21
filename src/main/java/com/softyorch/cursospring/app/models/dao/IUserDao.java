@@ -1,10 +1,10 @@
 package com.softyorch.cursospring.app.models.dao;
 
 
-import com.softyorch.cursospring.app.models.entity.User;
+import com.softyorch.cursospring.app.models.entity.SysUser;
 import org.springframework.data.repository.CrudRepository;
 
-public interface IUserDao extends CrudRepository<User, Long> {
+public interface IUserDao extends CrudRepository<SysUser, Long> {
 
-    User findByUsername(String username);
+    SysUser findByUsername(String username);
 }
