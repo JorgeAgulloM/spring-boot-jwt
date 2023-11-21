@@ -7,6 +7,7 @@ import com.softyorch.cursospring.app.models.entity.Producto;
 import com.softyorch.cursospring.app.service.IClienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Secured("ROLE_ADMIN")
@@ -24,6 +26,8 @@ import java.util.Map;
 @SessionAttributes("factura")
 public class FacturaController {
 
+    @Autowired
+    private MessageSource messages;
 
     @Autowired
     private IClienteService clienteService;
@@ -32,18 +36,28 @@ public class FacturaController {
     public String detail(
             @PathVariable(value = "id") Long id,
             Model model,
-            RedirectAttributes flash
+            RedirectAttributes flash,
+            Locale locale
     ) {
 
         Factura factura = clienteService.fetchFacturaByIdWithClienteWithItemFacturaWithProducto(id); //.findFacturaById(id);
 
         if (factura == null) {
-            flash.addFlashAttribute("error", "La factura no exite en la base de datos");
+            flash.addFlashAttribute(
+                    "error",
+                    messages.getMessage("text.factura.flash.db.error", null, locale)
+            );
             return "redirect:/listar";
         }
 
         model.addAttribute("factura", factura);
-        model.addAttribute("title", "Factura: ".concat(factura.getDescripcion()));
+        model.addAttribute(
+                "title",
+                String.format(
+                        messages.getMessage("text.factura.ver.titulo", null, locale),
+                        factura.getDescripcion())
+        );
+
 
         return "factura/detail";
     }
@@ -52,13 +66,17 @@ public class FacturaController {
     public String create(
             @PathVariable(value = "cliente_id") Long clienteId,
             Map<String, Object> model,
-            RedirectAttributes flash
+            RedirectAttributes flash,
+            Locale locale
     ) {
 
         Cliente cliente = clienteService.findOne(clienteId);
 
         if (cliente == null) {
-            flash.addFlashAttribute("error", "El cliente no existe en la base de datos");
+            flash.addFlashAttribute(
+                    "error",
+                    messages.getMessage("text.cliente.flash.db.error", null, locale)
+            );
             return "redirect:/listar";
         }
 
@@ -66,7 +84,7 @@ public class FacturaController {
         factura.setCliente(cliente);
 
         model.put("factura", factura);
-        model.put("title", "Crear Factura");
+        model.put("title", messages.getMessage("text.factura.form.titulo", null, locale));
 
         return "factura/form";
     }
@@ -85,17 +103,21 @@ public class FacturaController {
             @RequestParam(name = "item_id[]", required = false) Long[] itemId,
             @RequestParam(name = "cantidad[]", required = false) Integer[] cantidad,
             RedirectAttributes flash,
-            SessionStatus status
+            SessionStatus status,
+            Locale locale
     ) {
 
         if (result.hasErrors()) {
-            model.addAttribute("title", "Crear Factura");
+            model.addAttribute(
+                    "title",
+                    messages.getMessage("text.factura.form.titulo", null, locale)
+            );
             return "factura/form";
         }
 
         if (itemId == null || itemId.length == 0) {
-            model.addAttribute("title", "Crear Factura");
-            model.addAttribute("error", "Error: La factura NO puede no tener lineas!");
+            model.addAttribute("title", messages.getMessage("text.factura.form.titulo", null, locale));
+            model.addAttribute("error", messages.getMessage("text.factura.flash.lineas.error", null, locale));
             return "factura/form";
         }
 
@@ -112,22 +134,22 @@ public class FacturaController {
         clienteService.saveFactura(factura);
 
         status.setComplete();
-        flash.addFlashAttribute("success", "Factura creada con exito!");
+        flash.addFlashAttribute("success", messages.getMessage("text.factura.flash.crear.success", null, locale));
 
         return "redirect:/detail/" + factura.getCliente().getId();
     }
 
     @GetMapping("/delete/{id}")
-    public String eliminar(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
+    public String eliminar(@PathVariable(value = "id") Long id, RedirectAttributes flash, Locale locale) {
 
         Factura factura = clienteService.findFacturaById(id);
 
         if (factura != null) {
             clienteService.deleteFactura(id);
-            flash.addFlashAttribute("success", "Factura eliminada con exito");
+            flash.addFlashAttribute("success", messages.getMessage("text.factura.flash.eliminar.success", null, locale));
             return "redirect:/detail/" + factura.getCliente().getId();
         }
-        flash.addFlashAttribute("error", "La factura no existe en la base de datos!");
+        flash.addFlashAttribute("error", messages.getMessage("text.factura.flash.db.error", null, locale));
         return "redirect:/listar";
     }
 

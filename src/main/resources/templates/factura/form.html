@@ -11,14 +11,14 @@
             <h4 class="card-title">
                 <a class="btn btn-light btn-sx"
                    th:href="@{'/detail/' + ${factura.cliente.id}}"
-                   th:text="'&laquo; volver'">
+                   th:utext="#{text.global.volver}">
 
                 </a>
             </h4>
 
             <form th:action="@{/factura/form}" th:object="${factura}" method="post">
                 <div class="form-group row my-2">
-                    <label for="Cliente" class="col-sm-2 col-form-label" th:text="'Cliente'"></label>
+                    <label for="Cliente" class="col-sm-2 col-form-label" th:text="#{text.factura.form.cliente}"></label>
                     <div class="col-sm-6">
                         <input
                                 id="Cliente"
@@ -29,20 +29,20 @@
                     </div>
                 </div>
                 <div class="form-group row my-2">
-                    <label for="descripcion" class="col-sm-2 col-form-label" th:text="'Descripción'"></label>
+                    <label for="descripcion" class="col-sm-2 col-form-label" th:text="#{text.factura.form.descripcion}"></label>
                     <div class="col-sm-6">
                         <input type="text" id="descripcion" th:field="*{descripcion}" class="form-control" th:errorclass="'form-control is-invalid'"/>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
                     </div>
                 </div>
                 <div class="form-group row my-2">
-                    <label for="observacion" class="col-sm-2 col-form-label" th:text="'Observación'"></label>
+                    <label for="observacion" class="col-sm-2 col-form-label" th:text="#{text.factura.form.observacion}"></label>
                     <div class="col-sm-6">
                         <textarea id="observacion" th:field="*{observacion}" class="form-control"></textarea>
                     </div>
                 </div>
                 <div class="form-group row my-2">
-                    <label for="buscar_producto" class="col-sm-2 col-form-label" th:text="'Buscar producto'"></label>
+                    <label for="buscar_producto" class="col-sm-2 col-form-label" th:text="#{text.factura.form.buscar}"></label>
                     <div class="col-sm-6">
                         <input type="text" name="buscar_producto" id="buscar_producto" class="form-control" />
                     </div>
@@ -51,19 +51,19 @@
                 <table id="cargarItemsProductos" class="table table-sm table-striped table-hover">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Total</th>
-                            <th>Eliminar</th>
+                            <th th:text="#{text.factura.form.item.nombre}">Nombre</th>
+                            <th th:text="#{text.factura.form.item.precio}">Precio</th>
+                            <th th:text="#{text.factura.form.item.cantidad}">Cantidad</th>
+                            <th th:text="#{text.factura.form.item.total}">Total</th>
+                            <th th:text="#{text.factura.form.item.eliminar}">Eliminar</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
-                <h5>Total <span class="text-info" id="gran_total">0</span></h5>
+                <h5><span th:text="#{text.factura.form.item.total}">Total</span> <span class="text-info" id="gran_total">0</span></h5>
                 <div class="form-group row my-2">
                     <div class="col-sm-6">
-                        <input type="submit" th:field="${titulo}" class="btn btn-secondary"/>
+                        <input type="submit" th:value="${title}" class="btn btn-secondary"/>
                     </div>
                 </div>
             </form>
