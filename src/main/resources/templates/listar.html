@@ -3,6 +3,7 @@
 <meta charset="UTF-8">
 <head th:replace="~{layout/layout.html :: head}"></head>
 <body class="bg-dark">
+    <div id="i18n_eliminar_cliente" th:text="#{text.cliente.eliminarOk}" style="display: none;"></div>
     <header th:replace="~{layout/layout.html :: header}"></header>
     <div class="container py-4">
         <div class="card bg-light text-black">
@@ -12,7 +13,8 @@
                 <h4 class="card-title">
                     <a sec:authorize="hasRole('ROLE_ADMIN')"
                        class="btn btn-primary btn-xs"
-                       th:href="@{/form}">Crear cliente</a>
+                       th:href="@{/form}"
+                       th:text="#{text.cliente.crear}">Crear cliente</a>
                 </h4>
                 <table class="table table-striped">
                     <thead>
@@ -22,9 +24,9 @@
                         <th class="bg-dark text-white" th:text="#{text.cliente.apellido}">apellido</th>
                         <th class="bg-dark text-white" th:text="#{text.cliente.email}">email</th>
                         <th class="bg-dark text-white" th:text="#{text.cliente.createdAt}">fecha</th>
-                        <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white">crear factura</th>
-                        <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white">editar</th>
-                        <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white">eliminar</th>
+                        <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white" th:text="#{text.cliente.factura.crear}">crear factura</th>
+                        <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white" th:text="#{text.cliente.factura.detalle}">editar</th>
+                        <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white" th:text="#{text.cliente.factura.eliminar}">eliminar</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -34,12 +36,19 @@
                         <td th:text="${cliente.apellido}"></td>
                         <td th:text="${cliente.email}"></td>
                         <td th:text="${cliente.createAt}"></td>
-                        <td sec:authorize="hasRole('ROLE_ADMIN')"><a class="btn btn-success btn-xs" th:href="@{'/factura/form/' + ${cliente.id}}" th:text="'Crear factura'"></a></td>
-                        <td sec:authorize="hasRole('ROLE_ADMIN')"><a class="btn btn-primary btn-xs" th:href="@{/form/} + ${cliente.id}">Editar</a></td>
+                        <td sec:authorize="hasRole('ROLE_ADMIN')"><a
+                                class="btn btn-success btn-xs"
+                                th:href="@{'/factura/form/' + ${cliente.id}}"
+                                th:text="#{text.cliente.factura.crear}"></a></td>
+                        <td sec:authorize="hasRole('ROLE_ADMIN')"><a
+                                class="btn btn-primary btn-xs"
+                                th:href="@{/form/} + ${cliente.id}"
+                                th:text="#{text.cliente.editar}">Editar</a></td>
                         <td sec:authorize="hasRole('ROLE_ADMIN')"><a
                                 class="btn btn-danger btn-xs"
                                 th:href="@{/eliminar/} + ${cliente.id}"
-                                onclick="return confirm('¿Estás seguro de eliminar al cliente?');"
+                                th:text="#{text.cliente.eliminar}"
+                                onclick="return confirm(document.getElementById('i18n_eliminar_cliente').innerHTML);"
                         >Eliminar</a></td>
                     </tr>
                     </tbody>

@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.softyorch.cursospring.app.util.Constants.UPLOADS_FOLDER;
@@ -50,8 +52,12 @@ public class ClienteController {
     @Autowired
     private IUploadFileService uploadFileService;
 
+    @Autowired
+    private MessageSource messages;
+
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    @GetMapping(value = "/" + UPLOADS_FOLDER + "/{filename:.+}") // con la expresión regular :.+ evitamos que spriong trunque la extensión de la imagen.
+    @GetMapping(value = "/" + UPLOADS_FOLDER + "/{filename:.+}")
+    // con la expresión regular :.+ evitamos que spriong trunque la extensión de la imagen.
     public ResponseEntity<Resource> showPhoto(@PathVariable String filename) {
 
         Resource resource;
@@ -73,15 +79,19 @@ public class ClienteController {
 
     @PreAuthorize("hasRole('ROLE_USER')") //@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping(value = "/detail/{id}")
-    public String detail(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
+    public String detail(@PathVariable(value = "id") Long id,
+                         Map<String, Object> model,
+                         RedirectAttributes flash,
+                         Locale locale
+    ) {
         Cliente cliente = clienteService.fetchClienteByIdWithFacturas(id); //findOne(id);
         if (cliente == null) {
-            flash.addFlashAttribute("error", "El cliente no existe en la base de datos");
+            flash.addFlashAttribute("error", messages.getMessage("text.cliente.flash.db.error", null, locale));
             return "redirect:/listar";
         }
 
         model.put("cliente", cliente);
-        model.put("title", "Detalle cliente: " + cliente.getNombre());
+        model.put("title", messages.getMessage("text.cliente.detalle.titulo", null, locale).concat(": ").concat(cliente.getNombre()));
 
         return "detail";
     }
@@ -91,7 +101,8 @@ public class ClienteController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             Model model,
             Authentication authentication,
-            HttpServletRequest request
+            HttpServletRequest request,
+            Locale locale
     ) {
 
         if (authentication != null) {
@@ -124,13 +135,11 @@ public class ClienteController {
         }
 
 
-
-
         Pageable pageRequest = PageRequest.of(page, 4);
         Page<Cliente> clientes = clienteService.findAll(pageRequest);
         PageRender<Cliente> pageRender = new PageRender<>("/listar", clientes);
-        
-        model.addAttribute("titulo", "Listado de clientes");
+
+        model.addAttribute("titulo", messages.getMessage("text.cliente.listar.titulo", null, locale));
         model.addAttribute("clientes", clientes);
         model.addAttribute("page", pageRender);
         return "listar";
@@ -154,7 +163,7 @@ public class ClienteController {
 
         if (id > 0) {
             cliente = clienteService.findOne(id);
-            if (cliente == null){
+            if (cliente == null) {
                 flash.addFlashAttribute("error", "El ID del cliente no existe en la base de datos");
                 return "redirect:/listar";
             }
@@ -222,19 +231,21 @@ public class ClienteController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/eliminar/{id}")
-    public String eliminar(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
+    public String eliminar(@PathVariable(value = "id") Long id, RedirectAttributes flash, Locale locale) {
 
         if (id > 0) {
             Cliente cliente = clienteService.findOne(id);
 
             clienteService.delete(id);
-            flash.addFlashAttribute("success", "Cliente eliminado!!");
+            flash.addFlashAttribute("success", messages.getMessage("text.cliente.flash.eliminar.success", null, locale));
 
             if (uploadFileService.delete(cliente.getPhoto())) {
-                flash.addFlashAttribute(
-                        "info",
-                        "Foto " + cliente.getPhoto() + " eliminada con éxisto!"
+                String mensajeFotoEliminar = String.format(
+                        messages.getMessage("text.cliente.flash.foto.eliminar.success", null, locale),
+                        cliente.getPhoto()
                 );
+                flash.addFlashAttribute("info", mensajeFotoEliminar);
+
             }
 
         }
