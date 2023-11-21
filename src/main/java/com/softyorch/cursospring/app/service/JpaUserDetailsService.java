@@ -41,6 +41,7 @@ public class JpaUserDetailsService implements UserDetailsService {
         // Listar los roles del usuario
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role: sysUser.getAuthorities()) {
+            log.info("ROLE: ".concat(role.getAuthority()));
             authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
         }
 
