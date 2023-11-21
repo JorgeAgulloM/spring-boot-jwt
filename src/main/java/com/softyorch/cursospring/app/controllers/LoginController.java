@@ -1,5 +1,7 @@
 package com.softyorch.cursospring.app.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,9 +9,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Locale;
 
 @Controller
 public class LoginController {
+
+    @Autowired
+    private MessageSource messages;
 
     @GetMapping("/login")
     public String login(
@@ -17,19 +23,20 @@ public class LoginController {
             @RequestParam(value = "logout", required = false) String logout,
             Model model,
             Principal principal,
-            RedirectAttributes flash
+            RedirectAttributes flash,
+            Locale locale
     ) {
 
         if (principal != null) {
-            flash.addFlashAttribute("info","Ya tienes una sesión iniciada!");
+            flash.addFlashAttribute("info", messages.getMessage("text.login.already", null, locale));
             return "redirect:/";
         }
 
         if (error != null)
-            model.addAttribute("error", "Error en de Login: Nombre de usuario o constraseña incorrectos. Por favor, vuelva a intentarlo");
+            model.addAttribute("error", messages.getMessage("text.login.error", null, locale));
 
         if (logout != null)
-            model.addAttribute("success", "Sesión cerrada con exito!");
+            model.addAttribute("success", messages.getMessage("text.login.logout", null, locale));
 
         return "login";
     }
