@@ -1,6 +1,7 @@
 package com.softyorch.cursospring.app;
 
 import com.softyorch.cursospring.app.auth.handler.LoginSuccessHandler;
+import com.softyorch.cursospring.app.service.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,13 +28,21 @@ public class SpringSecurityConfig {
     private DataSource dataSource;
 
     @Autowired
+    private JpaUserDetailsService userDetailService;
+
+    @Autowired
+    public void userDetailsService(AuthenticationManagerBuilder build) throws Exception {
+        build.userDetailsService(userDetailService).passwordEncoder(passwordEncoder);
+    }
+
+/*    @Autowired
     public void configureGlobal(AuthenticationManagerBuilder build) throws Exception {
         build.jdbcAuthentication()
                 .dataSource(dataSource)
                 .passwordEncoder(passwordEncoder)
                 .usersByUsernameQuery("select username, password, enabled from users where username=?")
                 .authoritiesByUsernameQuery("select u.username, a.authority from authorities a inner join users u on (a.user_id=u.id) where u.username=?");
-    }
+    }*/
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
