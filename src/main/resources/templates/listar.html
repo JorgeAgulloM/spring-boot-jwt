@@ -18,10 +18,10 @@
                     <thead>
                     <tr>
                         <th sec:authorize="hasRole('ROLE_USER')" class="bg-dark text-white">id</th>
-                        <th class="bg-dark text-white">nombre</th>
-                        <th class="bg-dark text-white">apellido</th>
-                        <th class="bg-dark text-white">email</th>
-                        <th class="bg-dark text-white">fecha</th>
+                        <th class="bg-dark text-white" th:text="#{text.cliente.nombre}">nombre</th>
+                        <th class="bg-dark text-white" th:text="#{text.cliente.apellido}">apellido</th>
+                        <th class="bg-dark text-white" th:text="#{text.cliente.email}">email</th>
+                        <th class="bg-dark text-white" th:text="#{text.cliente.createdAt}">fecha</th>
                         <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white">crear factura</th>
                         <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white">editar</th>
                         <th sec:authorize="hasRole('ROLE_ADMIN')" class="bg-dark text-white">eliminar</th>

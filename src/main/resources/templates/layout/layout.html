@@ -26,10 +26,10 @@
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li sec:authorize="!isAuthenticated()"><a
-                                class="btn btn-primary"
+                                class="btn btn-primary mx-4"
                                 th:href="@{/login}">Sing In</a>
                         </li>
-                        <li sec:authorize="isAuthenticated()" class="dropdown show">
+                        <li sec:authorize="isAuthenticated()" class="dropdown show mx-4">
                             <a class="btn btn-outline-primary dropdown-toggle"
                                href="#" role="button"
                                id="dropdownMenuLink"
@@ -48,6 +48,11 @@
                                 </form>
                             </div>
                         </li>
+                        <li class="nav-item mx-1"><a class="btn btn-outline-success" href="?lang=es_ES">ES</a></li>
+                        <li class="nav-item mx-1"><a class="btn btn-outline-success" href="?lang=en_US">EN</a></li>
+                        <li class="nav-item mx-1"><a class="btn btn-outline-success" href="?lang=de_DE">DE</a></li>
+                        <li class="nav-item mx-1"><a class="btn btn-outline-success" href="?lang=fr_FR">FR</a></li>
+                        <li class="nav-item mx-1"><a class="btn btn-outline-success" href="?lang=it_IT">IT</a></li>
                     </ul>
                 </div>
             </div>
