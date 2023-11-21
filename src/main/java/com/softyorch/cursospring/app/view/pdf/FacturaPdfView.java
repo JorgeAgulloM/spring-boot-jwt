@@ -9,16 +9,27 @@ import com.softyorch.cursospring.app.models.entity.Factura;
 import com.softyorch.cursospring.app.models.entity.ItemFatura;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.view.document.AbstractPdfView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Phaser;
 
 @Component(value = "factura/detail")
 public class FacturaPdfView extends AbstractPdfView {
+
+    @Autowired
+    private MessageSource messages;
+
+    @Autowired
+    private LocaleResolver localeResolver;
+
     @Override
     protected void buildPdfDocument(
             Map<String, Object> model,
@@ -28,13 +39,15 @@ public class FacturaPdfView extends AbstractPdfView {
             HttpServletResponse response
     ) throws Exception {
 
+        Locale locale = localeResolver.resolveLocale(request);
+
         Factura factura = (Factura) model.get("factura");
 
         PdfPTable table = new PdfPTable(1);
         table.setSpacingAfter(20);
 
         PdfPCell cell = null;
-        cell = new PdfPCell(new Phrase("Datos del cliente"));
+        cell = new PdfPCell(new Phrase(messages.getMessage("text.factura.ver.datos.cliente", null, locale)));
         cell.setBackgroundColor(new Color(184, 218, 255));
         cell.setPadding(8f);
         table.addCell(cell);
@@ -44,7 +57,7 @@ public class FacturaPdfView extends AbstractPdfView {
         PdfPTable table2 = new PdfPTable(1);
         table2.setSpacingAfter(20);
 
-        cell = new PdfPCell(new Phrase("Datos de la factura"));
+        cell = new PdfPCell(new Phrase(messages.getMessage("text.factura.ver.datos.factura", null, locale)));
         cell.setBackgroundColor(new Color(195, 230, 203));
         cell.setPadding(8f);
 
