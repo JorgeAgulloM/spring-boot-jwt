@@ -30,8 +30,8 @@ public class ClienteListXmlView extends MarshallingView {
         model.remove("title");
         model.remove("page");
 
-        Page<Cliente> clientes = (Page<Cliente>) model.get("cliente");
-        model.remove("cliente");
+        Page<Cliente> clientes = (Page<Cliente>) model.get("clientes");
+        model.remove("clientes");
 
         model.put("clienteList", new ClienteList(clientes.getContent()));
 
