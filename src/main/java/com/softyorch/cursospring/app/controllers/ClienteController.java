@@ -4,6 +4,7 @@ import com.softyorch.cursospring.app.models.entity.Cliente;
 import com.softyorch.cursospring.app.service.IClienteService;
 import com.softyorch.cursospring.app.service.IUploadFileService;
 import com.softyorch.cursospring.app.util.paginator.PageRender;
+import com.softyorch.cursospring.app.view.xml.ClienteList;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
@@ -35,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -95,6 +97,14 @@ public class ClienteController {
 
         return "detail";
     }
+
+    //Solo para devolver un Json
+    @GetMapping(value = "/api/listar")
+    public @ResponseBody List<Cliente> listarRest() { return clienteService.findAll(); }
+
+    //Para devolver un Json o un xml añadiendo el parámetro format a la url => ?format=json ó ?format=xml
+    @GetMapping(value = "/api/listar2")
+    public @ResponseBody ClienteList listarRest2() { return new ClienteList(clienteService.findAll()); }
 
     @RequestMapping(value = {"/listar", "/"}, method = RequestMethod.GET)
     public String listar(
