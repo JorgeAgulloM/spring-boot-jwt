@@ -1,5 +1,6 @@
 package com.softyorch.cursospring.app.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -16,7 +17,8 @@ public class ItemFatura implements Serializable {
     private Integer cantidad;
 
     @JoinColumn(name = "producto_id")
-    @ManyToOne(fetch = FetchType.EAGER) //Se cambia a EAGER para poder listar los productos en el json, con la contrapartida de obtener todos lo datos en el momento.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) //Tambien se puede poner sobre la clase Producto. Evita los objetos insertados por proxy al añadirlos al array.
     private Producto producto;
 
     public Long getId() {
