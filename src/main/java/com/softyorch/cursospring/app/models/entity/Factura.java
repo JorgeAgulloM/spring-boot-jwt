@@ -2,6 +2,7 @@ package com.softyorch.cursospring.app.models.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -76,6 +77,7 @@ public class Factura implements Serializable {
         this.createAt = createAt;
     }
 
+    @XmlTransient //Omite este método al serializar, de forma que no se genere un bucle al solicitar la informacion entre cliente y factura
     public Cliente getCliente() {
         return cliente;
     }
