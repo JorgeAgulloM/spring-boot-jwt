@@ -16,7 +16,7 @@ public class ItemFatura implements Serializable {
     private Integer cantidad;
 
     @JoinColumn(name = "producto_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) //Se cambia a EAGER para poder listar los productos en el json, con la contrapartida de obtener todos lo datos en el momento.
     private Producto producto;
 
     public Long getId() {
