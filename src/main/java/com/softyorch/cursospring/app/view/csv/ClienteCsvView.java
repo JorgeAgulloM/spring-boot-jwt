@@ -12,7 +12,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import java.util.Map;
 
-@Component(value = "listar")
+@Component(value = "listar.csv")
 public class ClienteCsvView extends AbstractView {
 
     public ClienteCsvView() {
