@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -49,7 +50,7 @@ public class Cliente implements Serializable {
 			cascade = CascadeType.ALL, //Cascade.ALL La persistencia y la eliminación irán en cascada.
 			orphanRemoval = true
 	)
-	@JsonIgnore
+	@JsonManagedReference
 	private List<Factura> facturas;
 
 	public Cliente() {
