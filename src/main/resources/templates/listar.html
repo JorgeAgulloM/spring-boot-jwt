@@ -17,6 +17,8 @@
                        th:text="#{text.cliente.crear}">Crear cliente</a>
                     <a class="btn btn-success btn-sx float-end mx-2"
                        th:href="@{'/listar'(format=csv)}">CSV</a>
+                    <a class="btn btn-primary btn-sx float-end mx-2"
+                       th:href="@{'/listar'(format=xml)}">XML</a>
                 </h4>
                 <table class="table table-striped">
                     <thead>
