@@ -2,11 +2,8 @@ package com.softyorch.cursospring.app.auth.filter;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softyorch.cursospring.app.auth.service.IJWTService;
 import com.softyorch.cursospring.app.models.entity.SysUser;
-import io.jsonwebtoken.ClaimsBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,25 +12,26 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.softyorch.cursospring.app.auth.service.JWTServiceImpl.HEADER_STRING;
+import static com.softyorch.cursospring.app.auth.service.JWTServiceImpl.TOKEN_PREFIX;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final IJWTService jwtService;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, IJWTService jwtService) {
         this.authenticationManager = authenticationManager;
         setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/login", "POST"));
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -45,20 +43,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = obtainUsername(request);
         String password = obtainPassword(request);
 
-        if (username != null && password != null) {
-            logger.info("Username from request parameter (form-data): ".concat(username));
-            logger.info("Password from request parameter (form-data): ".concat(password));
-        } else {
+        if (username == null || password == null) {
             SysUser user;
             try {
                 user = new ObjectMapper().readValue(request.getInputStream(), SysUser.class);
-
                 username = user.getUsername();
                 password = user.getPassword();
-
-                logger.info("Username from request InputStream (raw): ".concat(username));
-                logger.info("Password from request InputStream (raw): ".concat(password));
-
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -78,36 +68,15 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Authentication authResult
     ) throws IOException, ServletException {
 
-        //String username = authResult.getName();
         User user = (User) authResult.getPrincipal();
-        String username = user.getUsername();
+        String token = jwtService.create(authResult, user.getUsername());
 
-        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode("MiclaveSecreta123456789MiclaveSecreta123456789"));
-        logger.warn("SecretKey: ".concat(secretKey.getAlgorithm()));
-
-        int minutes = 10;
-        long expiredTimeMinutes = 1000 * 60 * minutes;
-
-        Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
-
-        ClaimsBuilder claims = Jwts.claims();
-        claims.add("authorities", new ObjectMapper().writeValueAsString(roles));
-
-        String token = Jwts.builder()
-                .claims(claims.build())
-                .subject(username)
-                .signWith(secretKey)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiredTimeMinutes))
-                .compact();
-        logger.warn("Token: ".concat(token));
-
-        response.addHeader("Authorization", "Bearer ".concat(token));
+        response.addHeader(HEADER_STRING, TOKEN_PREFIX.concat(token));
 
         Map<String, Object> body = new HashMap<>();
         body.put("token", token);
         body.put("user", user);
-        body.put("message", String.format("Hola %s, lo has conseguido!", username));
+        body.put("message", String.format("Hola %s, lo has conseguido!", user.getUsername()));
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(200);
