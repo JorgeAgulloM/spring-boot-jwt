@@ -1,5 +1,6 @@
 package com.softyorch.cursospring.app;
 
+import com.softyorch.cursospring.app.auth.filter.JWTAuthenticationFilter;
 import com.softyorch.cursospring.app.auth.handler.LoginSuccessHandler;
 import com.softyorch.cursospring.app.service.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,6 +28,9 @@ public class SpringSecurityConfig {
 
     @Autowired
     private JpaUserDetailsService userDetailService;
+
+    @Autowired
+    private AuthenticationConfiguration authenticationConfiguration;
 
     @Autowired
     public void userDetailsService(AuthenticationManagerBuilder build) throws Exception {
@@ -56,6 +61,7 @@ public class SpringSecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll())
                 .exceptionHandling(((eh) -> eh.accessDeniedPage("/error_403")))*/
+                .addFilter(new JWTAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()))
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)//desactiva csrf para formularios, ya que vamos a trabajar con REST.
                 .sessionManagement(ses -> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); //Deshabilita el uso de sesiones
