@@ -43,11 +43,10 @@ public class SpringSecurityConfig {
                                 "/images/**",
                                 "/listar",
                                 "/locale",
-                                "/api/listar",
-                                "/api/cliente/listar"
+                                "/api/listar"
                         ).permitAll()
                         .anyRequest().authenticated()
-                ).formLogin(fl -> fl
+                )/*.formLogin(fl -> fl
                         .loginPage("/login")
                         .successHandler(successHandler)
                         .permitAll())
@@ -56,7 +55,7 @@ public class SpringSecurityConfig {
                         .clearAuthentication(true)
                         .logoutSuccessUrl("/login?logout")
                         .permitAll())
-                .exceptionHandling(((eh) -> eh.accessDeniedPage("/error_403")))
+                .exceptionHandling(((eh) -> eh.accessDeniedPage("/error_403")))*/
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)//desactiva csrf para formularios, ya que vamos a trabajar con REST.
                 .sessionManagement(ses -> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); //Deshabilita el uso de sesiones
