@@ -85,7 +85,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode("MiclaveSecreta123456789MiclaveSecreta123456789"));
         logger.warn("SecretKey: ".concat(secretKey.getAlgorithm()));
 
-        int minutes = 2;
+        int minutes = 10;
         long expiredTimeMinutes = 1000 * 60 * minutes;
 
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
@@ -115,7 +115,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException failed
+    ) throws IOException, ServletException {
         Map<String, Object> body = new HashMap<>();
         body.put("message", "Error en la autenticación. Usuario o contraseña incorrectos!");
         body.put("error", failed.getMessage());
