@@ -3,8 +3,11 @@ package com.softyorch.cursospring.app.models.entity;
 
 import jakarta.persistence.*;
 
+import static com.softyorch.cursospring.app.auth.service.JWTServiceImpl.AUTHORITIES;
+import static com.softyorch.cursospring.app.auth.service.JWTServiceImpl.AUTHORITY;
+
 @Entity
-@Table(name = "authorities", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "authority"})})
+@Table(name = AUTHORITIES, uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", AUTHORITY})})
 public class Role {
 
     @Id

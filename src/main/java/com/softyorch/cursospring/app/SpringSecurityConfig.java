@@ -2,7 +2,7 @@ package com.softyorch.cursospring.app;
 
 import com.softyorch.cursospring.app.auth.filter.JWTAuthenticationFilter;
 import com.softyorch.cursospring.app.auth.filter.JWTAuthorizationFilter;
-import com.softyorch.cursospring.app.auth.handler.LoginSuccessHandler;
+import com.softyorch.cursospring.app.auth.service.IJWTService;
 import com.softyorch.cursospring.app.service.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +22,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SpringSecurityConfig {
 
     @Autowired
-    private LoginSuccessHandler successHandler;
-
-    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
@@ -32,6 +29,9 @@ public class SpringSecurityConfig {
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
+
+    @Autowired
+    private IJWTService jwtService;
 
     @Autowired
     public void userDetailsService(AuthenticationManagerBuilder build) throws Exception {
@@ -43,26 +43,17 @@ public class SpringSecurityConfig {
 
         http.authorizeHttpRequests(auth ->
                         auth.requestMatchers(
-                                "/",
-                                "/css/**",
-                                "/js/**",
-                                "/images/**",
-                                "/listar",
-                                "/locale"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )/*.formLogin(fl -> fl
-                        .loginPage("/login")
-                        .successHandler(successHandler)
-                        .permitAll())
-                .logout(lOut -> lOut
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll())
-                .exceptionHandling(((eh) -> eh.accessDeniedPage("/error_403")))*/
-                .addFilter(new JWTAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationConfiguration.getAuthenticationManager()))
+                                        "/",
+                                        "/css/**",
+                                        "/js/**",
+                                        "/images/**",
+                                        "/listar",
+                                        "/locale"
+                                ).permitAll()
+                                .anyRequest().authenticated()
+                )
+                .addFilter(new JWTAuthenticationFilter(authenticationConfiguration.getAuthenticationManager(), jwtService))
+                .addFilter(new JWTAuthorizationFilter(authenticationConfiguration.getAuthenticationManager(), jwtService))
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)//desactiva csrf para formularios, ya que vamos a trabajar con REST.
                 .sessionManagement(ses -> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); //Deshabilita el uso de sesiones
