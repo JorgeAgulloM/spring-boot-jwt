@@ -1,6 +1,9 @@
 package com.softyorch.cursospring.app.auth.filter;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softyorch.cursospring.app.models.entity.SysUser;
+import io.jsonwebtoken.ClaimsBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -12,12 +15,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,14 +43,25 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     ) throws AuthenticationException {
 
         String username = obtainUsername(request);
-        username = (username != null) ? username.trim() : "";
-
         String password = obtainPassword(request);
-        password = (password != null) ? password : "";
 
-        if (!username.isEmpty() || !password.isEmpty()) {
-            logger.info("Username desde request parameter (form-data): ".concat(username));
-            logger.info("Password desde request parameter (form-data): ".concat(password));
+        if (username != null && password != null) {
+            logger.info("Username from request parameter (form-data): ".concat(username));
+            logger.info("Password from request parameter (form-data): ".concat(password));
+        } else {
+            SysUser user;
+            try {
+                user = new ObjectMapper().readValue(request.getInputStream(), SysUser.class);
+
+                username = user.getUsername();
+                password = user.getPassword();
+
+                logger.info("Username from request InputStream (raw): ".concat(username));
+                logger.info("Password from request InputStream (raw): ".concat(password));
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         UsernamePasswordAuthenticationToken authToken =
@@ -68,7 +85,21 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode("MiclaveSecreta123456789MiclaveSecreta123456789"));
         logger.warn("SecretKey: ".concat(secretKey.getAlgorithm()));
 
-        String token = Jwts.builder().subject(username).signWith(secretKey).compact();
+        int minutes = 2;
+        long expiredTimeMinutes = 1000 * 60 * minutes;
+
+        Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
+
+        ClaimsBuilder claims = Jwts.claims();
+        claims.add("authorities", new ObjectMapper().writeValueAsString(roles));
+
+        String token = Jwts.builder()
+                .claims(claims.build())
+                .subject(username)
+                .signWith(secretKey)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiredTimeMinutes))
+                .compact();
         logger.warn("Token: ".concat(token));
 
         response.addHeader("Authorization", "Bearer ".concat(token));
