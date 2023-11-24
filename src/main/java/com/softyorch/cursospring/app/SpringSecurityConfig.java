@@ -47,8 +47,7 @@ public class SpringSecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/listar",
-                                "/locale",
-                                "/api/listar"
+                                "/locale"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )/*.formLogin(fl -> fl
