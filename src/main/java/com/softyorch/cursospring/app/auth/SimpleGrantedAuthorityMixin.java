@@ -3,7 +3,7 @@ package com.softyorch.cursospring.app.auth;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public abstract class SimpleGrantedAuthoritiesMixin {
+public abstract class SimpleGrantedAuthorityMixin {
     @JsonCreator
-    public SimpleGrantedAuthoritiesMixin(@JsonProperty(value = "authority") String role) {}
+    public SimpleGrantedAuthorityMixin(@JsonProperty(value = "authority") String role) {}
 }
