@@ -15,15 +15,6 @@ import java.util.Locale;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
-/*    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        WebMvcConfigurer.super.addResourceHandlers(registry);
-
-        String resourcePath = Paths.get("uploads").toAbsolutePath().toUri().toString();
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(resourcePath); //Linux -> file:/opt/uploads/
-        *//*Hay que crear manualmente el directorio*//*
-    }*/
 
     public void addViewControllers(ViewControllerRegistry registry) {
         //addViewController -> URL de acceso. setViewName -> vista a devolver.

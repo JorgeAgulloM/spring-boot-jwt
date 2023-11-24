@@ -41,17 +41,7 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(auth ->
-                        auth.requestMatchers(
-                                        "/",
-                                        "/css/**",
-                                        "/js/**",
-                                        "/images/**",
-                                        "/listar",
-                                        "/locale"
-                                ).permitAll()
-                                .anyRequest().authenticated()
-                )
+        http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .addFilter(new JWTAuthenticationFilter(authenticationConfiguration.getAuthenticationManager(), jwtService))
                 .addFilter(new JWTAuthorizationFilter(authenticationConfiguration.getAuthenticationManager(), jwtService))
                 .httpBasic(Customizer.withDefaults())
