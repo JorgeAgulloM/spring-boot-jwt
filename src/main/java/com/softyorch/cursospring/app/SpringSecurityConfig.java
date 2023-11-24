@@ -9,6 +9,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -33,8 +35,8 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
+        http.authorizeHttpRequests(auth ->
+                        auth.requestMatchers(
                                 "/",
                                 "/css/**",
                                 "/js/**",
@@ -55,7 +57,9 @@ public class SpringSecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll())
                 .exceptionHandling(((eh) -> eh.accessDeniedPage("/error_403")))
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)//desactiva csrf para formularios, ya que vamos a trabajar con REST.
+                .sessionManagement(ses -> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); //Deshabilita el uso de sesiones
 
         return http.build();
     }
