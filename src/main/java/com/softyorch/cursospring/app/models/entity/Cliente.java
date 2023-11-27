@@ -25,12 +25,12 @@ public class Cliente implements Serializable {
 	@Column(name = "nombre")
 	@NotEmpty
 	@Size(min=4, max=45) //Nombre más largo del mundo en 2023 43 caracteres-> Brhadaranyakopanishadvivekachudamani Erreh
-	private String nombre;
+	private String name;
 
 	@Column(name = "apellido")
 	@NotEmpty
 	@Size(min=4, max=35) //Apellido más largo del mundo en 2023 35 caracteres-> Keihanaikukauakahihuliheekahaunaele
-	private String apellido;
+	private String surname;
 
 	@Column(name = "email")
 	@NotEmpty
@@ -72,20 +72,20 @@ public class Cliente implements Serializable {
 		this.id = id;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public String getName() {
+		return name;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getApellido() {
-		return apellido;
+	public String getSurname() {
+		return surname;
 	}
 
-	public void setApellido(String apellido) {
-		this.apellido = apellido;
+	public void setSurname(String surname) {
+		this.surname = surname;
 	}
 
 	public String getEmail() {
@@ -128,6 +128,6 @@ public class Cliente implements Serializable {
 
 	@Override
 	public String toString() {
-		return  nombre + " " + apellido;
+		return  name + " " + surname;
 	}
 }

@@ -49,7 +49,7 @@ public class FacturaPdfView extends AbstractPdfView {
         cell.setBackgroundColor(new Color(184, 218, 255));
         cell.setPadding(8f);
         table.addCell(cell);
-        table.addCell(factura.getCliente().getNombre() + " " + factura.getCliente().getApellido());
+        table.addCell(factura.getCliente().getName() + " " + factura.getCliente().getSurname());
         table.addCell(factura.getCliente().getEmail());
 
         PdfPTable table2 = new PdfPTable(1);
