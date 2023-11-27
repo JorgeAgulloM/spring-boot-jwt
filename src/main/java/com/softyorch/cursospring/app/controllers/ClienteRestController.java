@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -38,7 +39,15 @@ public class ClienteRestController {
         return clienteService.save(client);
     }
 
+    @PutMapping(value = "/clients/{id}")
+    public Cliente update(@RequestBody Cliente client, Long id) {
+        Cliente currentClient = clienteService.findById(id);
 
+        currentClient.setName(client.getName());
+        currentClient.setSurname(client.getSurname());
+        currentClient.setEmail(client.getEmail());
 
+        return clienteService.save(currentClient);
+    }
 
 }
