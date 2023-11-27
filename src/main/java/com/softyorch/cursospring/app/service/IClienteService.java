@@ -20,7 +20,7 @@ public interface IClienteService {
 
     Cliente fetchClienteByIdWithFacturas(Long id);
 
-    void save(Cliente cliente);
+    Cliente save(Cliente cliente);
 
     void delete(Long id);
 
