@@ -40,6 +40,7 @@ public class ClienteRestController {
     }
 
     @PutMapping(value = "/clients/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     public Cliente update(@RequestBody Cliente client, Long id) {
         Cliente currentClient = clienteService.findById(id);
 
@@ -48,6 +49,13 @@ public class ClienteRestController {
         currentClient.setEmail(client.getEmail());
 
         return clienteService.save(currentClient);
+    }
+
+    @DeleteMapping(value = "/client/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(Long id) {
+        Cliente currentClient = clienteService.findById(id);
+        clienteService.delete(currentClient.getId());
     }
 
 }
