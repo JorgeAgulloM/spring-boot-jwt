@@ -12,6 +12,8 @@ public interface IClienteService {
 
     List<Cliente> findAll();
 
+    Cliente findById(Long id);
+
     Page<Cliente> findAll(Pageable page);
 
     Cliente findOne(Long id);

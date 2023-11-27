@@ -35,6 +35,12 @@ public class ClienteServiceImpl implements IClienteService {
     @Transactional(readOnly = true)
     public List<Cliente> findAll() {return (List<Cliente>) clienteDao.findAll();}
 
+    @Transactional(readOnly = true)
+    @Override
+    public Cliente findById(Long id) {
+        return clienteDao.findById(id).orElse(null);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Page<Cliente> findAll(Pageable page) {
