@@ -44,6 +44,11 @@ public class Cliente implements Serializable {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createAt;
 
+	@PrePersist
+	public void prePersist() {
+		createAt = new Date();
+	}
+
 	@OneToMany( // Un cliente muchas facturas
 			mappedBy = "cliente", //Mapeo por el atributo de la otra clase de la realación. Se consigue que cliente tenga vista de las faturas pero las facturas solo de su cliente.
 			fetch = FetchType.LAZY, //LAZY carga de datos perezosa, evita traer to.do con una consulta solo obtendrá los datos cuando se le invoque, y no antes.
