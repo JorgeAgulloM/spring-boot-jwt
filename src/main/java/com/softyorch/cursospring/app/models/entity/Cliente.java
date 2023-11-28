@@ -22,7 +22,7 @@ public class Cliente implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "nombre")
+	@Column(name = "nombre", nullable = false, unique = true)
 	@NotEmpty
 	@Size(min=4, max=45) //Nombre más largo del mundo en 2023 43 caracteres-> Brhadaranyakopanishadvivekachudamani Erreh
 	private String name;
@@ -32,7 +32,7 @@ public class Cliente implements Serializable {
 	@Size(min=4, max=35) //Apellido más largo del mundo en 2023 35 caracteres-> Keihanaikukauakahihuliheekahaunaele
 	private String surname;
 
-	@Column(name = "email")
+	@Column(name = "email", nullable = false, unique = true)
 	@NotEmpty
 	@Email
 	private String email;
