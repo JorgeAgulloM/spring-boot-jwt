@@ -72,19 +72,31 @@ public class ClienteRestController {
     }
 
     @PutMapping(value = "/clients/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Cliente update(@RequestBody Cliente client, @PathVariable Long id) {
-        System.out.println("################  Client: " + client);
-        System.out.println("################  Id: " + id);
-
+    public ResponseEntity<?> update(@RequestBody Cliente client, @PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
 
         Cliente currentClient = clienteService.findById(id);
+
+        if (currentClient == null) {
+            response.put("message", "Error in database query. The id client " + id + " does exist in database.");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
 
         currentClient.setName(client.getName());
         currentClient.setSurname(client.getSurname());
         currentClient.setEmail(client.getEmail());
 
-        return clienteService.save(currentClient);
+        try {
+            clienteService.save(currentClient);
+        } catch (DataAccessException e) {
+            response.put("message", "Error when user updating");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.put("message", "Client updated successful");
+        response.put("client", currentClient);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/clients/{id}")
