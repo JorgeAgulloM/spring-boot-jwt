@@ -4,10 +4,14 @@ import com.softyorch.cursospring.app.models.entity.Cliente;
 import com.softyorch.cursospring.app.service.IClienteService;
 import com.softyorch.cursospring.app.view.xml.ClienteList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -28,8 +32,24 @@ public class ClienteRestController {
     }
 
     @GetMapping(value = "/clients/{id}")
-    public Cliente show(@PathVariable Long id) {
-        return clienteService.findById(id);
+    public ResponseEntity<?> show(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Cliente client;
+
+        try {
+            client = clienteService.findById(id);
+        } catch (DataAccessException e) {
+            response.put("message", "Error in database query.");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (client == null) {
+            response.put("message", "The client does not exist");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(client, HttpStatus.OK);
     }
 
     @PostMapping(value = "/clients")
