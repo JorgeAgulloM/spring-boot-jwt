@@ -101,9 +101,19 @@ public class ClienteRestController {
 
     @DeleteMapping(value = "/clients/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
         Cliente currentClient = clienteService.findById(id);
-        clienteService.delete(currentClient.getId());
+
+        try {
+            clienteService.delete(currentClient.getId());
+            response.put("message", "The id user " + id + " has been deleted.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            response.put("message", "Error when user deleting");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
