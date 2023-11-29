@@ -3,15 +3,18 @@ package com.softyorch.cursospring.app.controllers;
 import com.softyorch.cursospring.app.models.entity.Cliente;
 import com.softyorch.cursospring.app.service.IClienteService;
 import com.softyorch.cursospring.app.view.xml.ClienteList;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -54,9 +57,12 @@ public class ClienteRestController {
 
     @PostMapping(value = "/clients")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> create(@RequestBody Cliente client) {
+    public ResponseEntity<?> create(@Valid @RequestBody Cliente client, BindingResult result) {
         Map<String, Object> response = new HashMap<>();
         Cliente newClient;
+
+        if (validations(result, response))
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
         try {
             newClient = clienteService.save(client);
@@ -72,8 +78,11 @@ public class ClienteRestController {
     }
 
     @PutMapping(value = "/clients/{id}")
-    public ResponseEntity<?> update(@RequestBody Cliente client, @PathVariable Long id) {
+    public ResponseEntity<?> update(@Valid @RequestBody Cliente client, BindingResult result, @PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
+
+        if (validations(result, response))
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
         Cliente currentClient = clienteService.findById(id);
 
@@ -114,6 +123,26 @@ public class ClienteRestController {
             response.put("error", e.getMostSpecificCause().getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private boolean validations(BindingResult result, Map<String, Object> response) {
+        if (result.hasErrors()) {
+            //Forma básica de obtener los errores.
+            /*List<String> errors = new ArrayList<>();
+
+            for (FieldError error: result.getFieldErrors()) {
+                errors.add("Field '" + error.getField() + "' " + error.getDefaultMessage());
+            }*/
+            List<String> errors = result
+                    .getFieldErrors()
+                    .stream()
+                    .map( error -> "Field '" + error.getField() + "' " + error.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            response.put("errors", errors);
+            return true;
+        }
+        return false;
     }
 
 }
