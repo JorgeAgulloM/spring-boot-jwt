@@ -40,7 +40,7 @@ public class ClienteRestController {
             client = clienteService.findById(id);
         } catch (DataAccessException e) {
             response.put("message", "Error in database query.");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", e.getMostSpecificCause().getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -62,7 +62,7 @@ public class ClienteRestController {
             newClient = clienteService.save(client);
         } catch (DataAccessException e) {
             response.put("message", "Error when user creating");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", e.getMostSpecificCause().getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -90,7 +90,7 @@ public class ClienteRestController {
             clienteService.save(currentClient);
         } catch (DataAccessException e) {
             response.put("message", "Error when user updating");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", e.getMostSpecificCause().getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -111,7 +111,7 @@ public class ClienteRestController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (DataAccessException e) {
             response.put("message", "Error when user deleting");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("error", e.getMostSpecificCause().getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
